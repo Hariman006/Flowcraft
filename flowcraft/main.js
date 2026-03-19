@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * FlowCraft — Single-file Workflow Engine (Enhanced Edition)
+ * Raze — Razors Through Workflows
  * Backend: Express + Mongoose (MongoDB)
  * Frontend: Served inline as HTML string — with SVG icons & visual polish
  *
  * Usage:
  *   npm install express mongoose uuid
- *   MONGO_URI=mongodb://localhost:27017/flowcraft node server.js
+ *   MONGO_URI=mongodb://localhost:27017/raze node server.js
  */
 
 const express = require('express');
@@ -16,7 +16,7 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 app.use(express.json());
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/flowcraft';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/raze';
 const PORT = process.env.PORT || 3000;
 
 // ─────────────────────────────────────────────
@@ -496,7 +496,7 @@ const FRONTEND_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FlowCraft — Workflow Engine</title>
+<title>Raze — Razors Through Workflows</title>
 <link href="https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ── DESIGN TOKENS — Jet Black × Silver Beige × Mustard Yellow ── */
@@ -571,7 +571,7 @@ const FRONTEND_HTML = `<!DOCTYPE html>
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 14px; }
+html { font-size: 15px; }
 
 
 /* ══ DARK MODE DROPDOWN / SELECT / INPUT FIX ══ */
@@ -618,11 +618,11 @@ thead tr {
 thead th {
   background: #2A2820 !important;
   color: #F2D04E !important;
-  font-size: .68rem !important;
+  font-size: .75rem !important;
   font-weight: 700 !important;
-  letter-spacing: 2.5px !important;
+  letter-spacing: 2px !important;
   text-transform: uppercase !important;
-  padding: 13px 16px !important;
+  padding: 14px 16px !important;
   font-family: var(--font-display) !important;
   border-bottom: 2px solid #F2D04E !important;
   border-right: none !important;
@@ -644,8 +644,8 @@ tbody tr:hover {
   box-shadow: inset 3px 0 0 #F2D04E !important;
 }
 tbody td {
-  padding: 13px 16px !important;
-  font-size: .86rem !important;
+  padding: 14px 16px !important;
+  font-size: .92rem !important;
   color: #1A1812 !important;
   font-weight: 600 !important;
   vertical-align: middle !important;
@@ -694,7 +694,7 @@ body {
   color: var(--text-0);
   min-height: 100vh;
   display: flex;
-  overflow: hidden;
+  overflow: auto;
 }
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -723,7 +723,10 @@ body {
   display: flex;
   flex-direction: column;
   z-index: 10;
-  position: relative;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .sidebar::after {
@@ -815,10 +818,10 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 20px;
+  padding: 10px 20px;
   cursor: pointer;
   color: rgba(228,223,216,.82);
-  font-size: .82rem;
+  font-size: .9rem;
   font-weight: 600;
   font-family: var(--font-display);
   border-left: 2px solid transparent;
@@ -843,40 +846,186 @@ body {
 
 .sidebar-footer {
   margin-top: auto;
-  padding: 14px 20px;
-  border-top: 1px solid rgba(242,208,78,.2);
+  padding: 14px 16px;
+  border-top: 1px solid rgba(242,208,78,.15);
 }
 
-.db-indicator {
+/* ── RAZE ANIMATED FOOTER WIDGET ── */
+.raze-widget {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;
-  background: rgba(242,208,78,.08);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(242,208,78,.2);
+  padding: 12px 10px 10px;
+  background: rgba(242,208,78,.06);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(242,208,78,.15);
+  position: relative;
+  overflow: hidden;
 }
 
-.db-dot {
-  width: 7px; height: 7px;
+.raze-widget::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: -60%;
+  width: 60%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(242,208,78,.6), transparent);
+  animation: raze-scan 3s ease-in-out infinite;
+}
+
+@keyframes raze-scan {
+  0%   { left: -60%; opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { left: 110%; opacity: 0; }
+}
+
+.raze-bolt-wrap {
+  position: relative;
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.raze-bolt-ring {
+  position: absolute; inset: 0;
   border-radius: 50%;
+  border: 1.5px solid rgba(242,208,78,.25);
+  animation: raze-ring-spin 6s linear infinite;
+}
+
+.raze-bolt-ring::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: 50%; transform: translateX(-50%);
+  width: 5px; height: 5px;
   background: var(--mustard);
-  box-shadow: 0 0 6px rgba(242,208,78,.8);
-  animation: pulse-dot 2.4s ease-in-out infinite;
-  flex-shrink: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--mustard);
 }
 
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--mustard); }
-  50% { opacity: .6; box-shadow: 0 0 12px var(--mustard), 0 0 24px var(--mustard-glow); }
+@keyframes raze-ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-.db-label { font-size: .7rem; font-family: var(--font-display); color: rgba(228,223,216,.8); flex: 1; font-weight: 600; }
-.db-version { font-size: .65rem; font-family: var(--font-mono); color: rgba(248,244,239,.8); font-weight: 600; }
+.raze-bolt-core {
+  position: relative; z-index: 1;
+  width: 28px; height: 28px;
+  background: rgba(242,208,78,.12);
+  border: 1px solid rgba(242,208,78,.3);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  animation: raze-bolt-pulse 2s ease-in-out infinite;
+}
+
+@keyframes raze-bolt-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(242,208,78,.3); }
+  50%       { box-shadow: 0 0 14px rgba(242,208,78,.6), 0 0 28px rgba(242,208,78,.2); }
+}
+
+.raze-particles {
+  position: absolute; inset: 0; pointer-events: none;
+}
+
+.raze-p {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: var(--mustard);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.raze-p:nth-child(1) { top: 20%; left: 10%; animation: raze-float 3.2s 0s ease-in-out infinite; }
+.raze-p:nth-child(2) { top: 70%; left: 80%; animation: raze-float 2.8s .6s ease-in-out infinite; }
+.raze-p:nth-child(3) { top: 40%; left: 90%; animation: raze-float 3.5s 1.2s ease-in-out infinite; }
+.raze-p:nth-child(4) { top: 80%; left: 20%; animation: raze-float 2.5s 1.8s ease-in-out infinite; }
+.raze-p:nth-child(5) { top: 15%; left: 60%; animation: raze-float 3.8s 0.4s ease-in-out infinite; }
+
+@keyframes raze-float {
+  0%   { opacity: 0; transform: translateY(0) scale(1); }
+  30%  { opacity: .9; }
+  70%  { opacity: .5; }
+  100% { opacity: 0; transform: translateY(-12px) scale(0.4); }
+}
+
+.raze-wordmark {
+  font-family: var(--font-display);
+  font-size: .82rem;
+  font-weight: 700;
+  color: rgba(228,223,216,.7);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.raze-wordmark span { color: var(--mustard); }
+
+.raze-tagline {
+  font-family: var(--font-mono);
+  font-size: .6rem;
+  color: rgba(228,223,216,.3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* ── OLD DB INDICATOR (kept for compat, hidden) ── */
+.db-indicator { display: none; }
+.db-dot { display: none; }
+.db-label { display: none; }
+.db-version { display: none; }
+
+/* ── RAZE WIDGET LIGHT MODE (sidebar is dark jet, so these are already bright) ── */
+/* Light mode sidebar IS dark, so the default styles above are fine.             */
+/* Dark mode flips the sidebar to light beige #E4DFD8 — need dark contrast.     */
+body.dark .raze-widget {
+  background: rgba(36,34,27,.1) !important;
+  border-color: rgba(184,144,10,.5) !important;
+  box-shadow: 0 2px 12px rgba(36,34,27,.08);
+}
+
+body.dark .raze-widget::before {
+  background: linear-gradient(90deg, transparent, rgba(184,144,10,.8), transparent) !important;
+}
+
+body.dark .raze-bolt-ring {
+  border-color: rgba(184,144,10,.5) !important;
+}
+
+body.dark .raze-bolt-ring::before {
+  background: #B8900A !important;
+  box-shadow: 0 0 6px rgba(184,144,10,.8) !important;
+}
+
+body.dark .raze-bolt-core {
+  background: rgba(184,144,10,.18) !important;
+  border-color: rgba(184,144,10,.6) !important;
+}
+
+body.dark .raze-bolt-core svg polyline {
+  stroke: #B8900A !important;
+  fill: rgba(184,144,10,.3) !important;
+}
+
+body.dark .raze-wordmark {
+  color: #24221B !important;
+  text-shadow: none;
+  font-weight: 800 !important;
+}
+
+body.dark .raze-wordmark span {
+  color: #B8900A !important;
+}
+
+body.dark .raze-tagline {
+  color: rgba(36,34,27,.5) !important;
+}
+
+body.dark .raze-p {
+  background: #B8900A !important;
+}
 
 /* ── MAIN LAYOUT ── */
 .main {
-  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+  flex: 1; display: flex; flex-direction: column; overflow: auto;
   background:
     radial-gradient(ellipse 80% 50% at 90% 0%, rgba(242,208,78,.13) 0%, transparent 60%),
     radial-gradient(ellipse 60% 40% at 0% 100%, rgba(242,208,78,.09) 0%, transparent 55%),
@@ -892,6 +1041,9 @@ body {
   height: 54px;
   display: flex; align-items: center; justify-content: space-between;
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 9;
 }
 
 .topbar-left { display: flex; align-items: center; gap: 10px; }
@@ -906,7 +1058,7 @@ body {
 }
 
 .topbar-title {
-  font-size: .9rem;
+  font-size: 1rem;
   font-weight: 600;
   color: rgba(228,223,216,.92);
   font-family: var(--font-display);
@@ -917,7 +1069,7 @@ body {
 .topbar-right { display: flex; align-items: center; gap: 12px; }
 
 .topbar-time {
-  font-size: .72rem;
+  font-size: .78rem;
   font-family: var(--font-mono);
   color: rgba(228,223,216,.65);
 }
@@ -949,7 +1101,7 @@ body {
 }
 
 .card-title {
-  font-size: .78rem;
+  font-size: .85rem;
   font-weight: 700;
   color: var(--text-2);
   text-transform: uppercase;
@@ -973,11 +1125,11 @@ body {
 
 /* ── BUTTONS ── */
 .btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 14px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px;
   border-radius: var(--radius-sm);
   font-family: var(--font-display);
-  font-size: .8rem; font-weight: 600;
+  font-size: .9rem; font-weight: 600;
   cursor: pointer; border: none;
   transition: all .18s ease;
   white-space: nowrap;
@@ -992,8 +1144,8 @@ body {
 .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,95,95,.2); }
 .btn-danger:hover { background: rgba(255,95,95,.2); }
 
-.btn-sm { padding: 5px 12px; font-size: .76rem; }
-.btn-xs { padding: 3px 8px; font-size: .72rem; border-radius: 4px; }
+.btn-sm { padding: 8px 16px; font-size: .88rem; }
+.btn-xs { padding: 6px 13px; font-size: .83rem; border-radius: 5px; }
 
 /* ── STAT CARDS ── */
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
@@ -1051,13 +1203,13 @@ body {
 .stat-trend.neutral { background: var(--bg-3); color: var(--text-2); }
 
 .stat-label {
-  font-size: .67rem; font-weight: 700; color: #5A5548;
+  font-size: .74rem; font-weight: 700; color: #5A5548;
   text-transform: uppercase; letter-spacing: 1.5px;
   font-family: var(--font-display); margin-bottom: 4px;
 }
 
 .stat-value {
-  font-family: var(--font-display); font-size: 2.2rem; font-weight: 700;
+  font-family: var(--font-display); font-size: 2.4rem; font-weight: 700;
   color: #24221B; line-height: 1; letter-spacing: -1.5px;
 }
 
@@ -1095,16 +1247,16 @@ body {
 .input-wrap .icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-2); display: flex; align-items: center; }
 
 .form-row { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
-.form-label { font-size: .72rem; font-weight: 700; color: #4A4740; letter-spacing: 1px; text-transform: uppercase; font-family: var(--font-display); }
+.form-label { font-size: .78rem; font-weight: 700; color: #4A4740; letter-spacing: 1px; text-transform: uppercase; font-family: var(--font-display); }
 .form-input {
-  padding: 8px 12px; border: 1px solid rgba(36,34,27,.2); border-radius: var(--radius-sm);
-  font-family: var(--font-mono); font-size: .82rem;
+  padding: 9px 13px; border: 1px solid rgba(36,34,27,.2); border-radius: var(--radius-sm);
+  font-family: var(--font-mono); font-size: .88rem;
   background: rgba(255,255,255,.7); color: #24221B; outline: none; transition: all .18s; width: 100%;
 }
 .form-input:focus { border-color: var(--mustard); background: var(--bg-1); box-shadow: 0 0 0 3px var(--mustard-dim); }
 textarea.form-input { resize: vertical; min-height: 80px; }
 .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.form-hint { font-size: .7rem; color: #6A6558; margin-top: 3px; font-family: var(--font-mono); font-weight: 600; }
+.form-hint { font-size: .76rem; color: #6A6558; margin-top: 3px; font-family: var(--font-mono); font-weight: 600; }
 
 /* ── TABLES ── */
 table { width: 100%; border-collapse: collapse; }
@@ -1122,8 +1274,8 @@ tbody td { padding: 12px 14px; font-size: .84rem; vertical-align: middle; color:
 /* ── BADGES ── */
 .badge {
   display: inline-flex; align-items: center; gap: 4px;
-  padding: 2px 8px; border-radius: 4px;
-  font-size: .66rem; font-weight: 600; letter-spacing: .5px;
+  padding: 3px 10px; border-radius: 4px;
+  font-size: .72rem; font-weight: 600; letter-spacing: .5px;
   text-transform: uppercase; font-family: var(--font-mono);
 }
 .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .7; }
@@ -1157,17 +1309,17 @@ tbody td { padding: 12px 14px; font-size: .84rem; vertical-align: middle; color:
 .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border-0); gap: 12px; }
 .modal-title-wrap { display: flex; align-items: center; gap: 10px; }
 .modal-title-icon { width: 32px; height: 32px; background: var(--slate-dim); border: 1px solid var(--slate-muted); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--slate); }
-.modal-title { font-size: 1rem; font-weight: 700; color: var(--text-0); font-family: var(--font-display); }
-.modal-close { background: var(--bg-3); border: 1px solid var(--border-1); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-1); font-size: .85rem; transition: .18s; }
+.modal-title { font-size: 1.05rem; font-weight: 700; color: var(--text-0); font-family: var(--font-display); }
+.modal-close { background: var(--bg-3); border: 1px solid var(--border-1); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-1); font-size: .9rem; transition: .18s; }
 .modal-close:hover { background: var(--bg-4); color: var(--text-0); }
 .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border-0); }
 
 /* ── STEP CARDS ── */
 .step-card { background: linear-gradient(120deg, rgba(242,237,230,.9), rgba(237,232,225,.85)); border: 1px solid rgba(36,34,27,.09); border-radius: var(--radius-md); padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 6px; transition: all .18s; }
 .step-card:hover { border-color: var(--mustard); box-shadow: 0 2px 14px var(--mustard-dim); }
-.step-order { width: 26px; height: 26px; background: var(--mustard); border: 1px solid var(--mustard); color: var(--jet); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; font-family: var(--font-mono); flex-shrink: 0; }
+.step-order { width: 28px; height: 28px; background: var(--mustard); border: 1px solid var(--mustard); color: var(--jet); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 700; font-family: var(--font-mono); flex-shrink: 0; }
 .step-info { flex: 1; }
-.step-name { font-weight: 700; font-size: .88rem; font-family: var(--font-display); color: #24221B; }
+.step-name { font-weight: 700; font-size: .94rem; font-family: var(--font-display); color: #24221B; }
 
 /* ── STEP TYPE ICONS ── */
 .step-type-icon {
@@ -1182,23 +1334,23 @@ tbody td { padding: 12px 14px; font-size: .84rem; vertical-align: middle; color:
 /* ── RULE ROWS ── */
 .rule-row { display: grid; grid-template-columns: 42px 1fr 160px 72px; gap: 8px; align-items: center; padding: 8px 10px; border-radius: var(--radius-sm); background: linear-gradient(120deg, rgba(242,237,230,.85), rgba(237,232,225,.8)); margin-bottom: 5px; border: 1px solid rgba(36,34,27,.08); transition: .18s; }
 .rule-row:hover { border-color: var(--border-green); }
-.rule-priority { width: 32px; height: 26px; background: var(--mustard); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; color: var(--jet); font-family: var(--font-mono); }
-.rule-condition { font-family: var(--font-mono); font-size: .76rem; color: #2A2820; background: rgba(255,255,255,.6); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(36,34,27,.15); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.rule-priority { width: 32px; height: 28px; background: var(--mustard); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 700; color: var(--jet); font-family: var(--font-mono); }
+.rule-condition { font-family: var(--font-mono); font-size: .82rem; color: #2A2820; background: rgba(255,255,255,.6); padding: 5px 9px; border-radius: 4px; border: 1px solid rgba(36,34,27,.15); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
 .rule-condition.default { color: var(--jet); font-weight: 700; background: var(--mustard-dim); border-color: rgba(242,208,78,.4); }
 
 /* ── FLOW DIAGRAM ── */
-.flow-diagram { display: flex; align-items: flex-start; gap: 0; padding: 16px 0; overflow-x: auto; position: relative; }
-.flow-node { display: flex; flex-direction: column; align-items: center; position: relative; flex-shrink: 0; }
-.flow-connector { display: flex; align-items: center; padding-top: 22px; flex-shrink: 0; }
-.flow-connector-line { width: 40px; height: 2px; background: var(--bg-4); position: relative; transition: background .3s; }
+.flow-diagram { display: flex; align-items: flex-start; gap: 0; padding: 20px 0; overflow-x: auto; position: relative; width: 100%; }
+.flow-node { display: flex; flex-direction: column; align-items: center; position: relative; flex: 1; min-width: 140px; }
+.flow-connector { display: flex; align-items: center; padding-top: 30px; flex-shrink: 0; flex: 0 0 48px; }
+.flow-connector-line { flex: 1; width: 48px; height: 3px; background: var(--bg-4); position: relative; transition: background .3s; }
 .flow-connector-line.done { background: var(--mustard); box-shadow: 0 0 5px var(--mustard-glow); }
 .flow-connector-line.active { background: var(--blue); }
-.flow-connector-arrow { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 7px solid var(--bg-3); transition: border-left-color .3s; }
+.flow-connector-arrow { width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 9px solid var(--bg-3); transition: border-left-color .3s; }
 .flow-connector-line.done + .flow-connector-arrow { border-left-color: var(--mustard); }
 .flow-connector-line.active + .flow-connector-arrow { border-left-color: var(--blue); }
 
-.flow-step-box { width: 110px; background: var(--bg-2); border: 1.5px solid var(--border-0); border-radius: var(--radius-md); padding: 10px; text-align: center; transition: all .25s; cursor: default; position: relative; overflow: hidden; }
-.flow-step-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--bg-4); transition: background .3s; }
+.flow-step-box { width: 100%; max-width: 180px; background: var(--bg-2); border: 1.5px solid var(--border-0); border-radius: var(--radius-md); padding: 16px 12px; text-align: center; transition: all .25s; cursor: default; position: relative; overflow: hidden; }
+.flow-step-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--bg-4); transition: background .3s; }
 .flow-step-box.pending { border-color: var(--border-0); }
 .flow-step-box.current { border-color: var(--blue); background: var(--blue-dim); box-shadow: 0 0 16px rgba(100,181,246,.2); }
 .flow-step-box.current::before { background: var(--blue); }
@@ -1207,10 +1359,10 @@ tbody td { padding: 12px 14px; font-size: .84rem; vertical-align: middle; color:
 .flow-step-box.failed { border-color: rgba(255,95,95,.4); background: var(--red-dim); }
 .flow-step-box.failed::before { background: var(--red); }
 
-.flow-step-icon { display: flex; align-items: center; justify-content: center; margin: 0 auto 4px; }
-.flow-step-name { font-size: .68rem; font-weight: 700; color: #24221B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.flow-step-type { font-size: .62rem; color: #5A5548; font-family: var(--font-mono); font-weight: 600; margin-top: 2px; }
-.flow-step-status { margin-top: 6px; }
+.flow-step-icon { display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+.flow-step-name { font-size: .85rem; font-weight: 700; color: #24221B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.flow-step-type { font-size: .72rem; color: #5A5548; font-family: var(--font-mono); font-weight: 600; margin-top: 4px; }
+.flow-step-status { margin-top: 10px; }
 
 /* ── SPINNER ── */
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -1620,6 +1772,19 @@ body.dark .uuid-cell {
   background: rgba(242,208,78,.1) !important;
 }
 
+/* Dynamic table cell classes — theme-aware */
+.wf-name-cell  { color: #1A1812; }
+.wf-desc-cell  { color: #7A7568; }
+.wf-step-cell  { color: #3A3428; }
+.wf-version-cell { color: #5A5548; }
+.wf-meta-cell  { color: #5A5548; }
+
+body.dark .wf-name-cell    { color: #F5F2EE !important; }
+body.dark .wf-desc-cell    { color: #A8A49A !important; }
+body.dark .wf-step-cell    { color: #C8C4B8 !important; }
+body.dark .wf-version-cell { color: #C8C4B8 !important; }
+body.dark .wf-meta-cell    { color: #A8A49A !important; }
+
 /* ── FORM ELEMENTS DARK MODE ── */
 body.dark .form-input {
   background: rgba(228,223,216,.06) !important;
@@ -1729,8 +1894,8 @@ body.dark .flow-step-box { background: rgba(36,34,27,.9) !important; border-colo
 body.dark .flow-step-box.done { background: rgba(242,208,78,.12) !important; border-color: rgba(242,208,78,.45) !important; }
 body.dark .flow-step-box.current { background: rgba(100,181,246,.12) !important; border-color: rgba(100,181,246,.45) !important; }
 body.dark .flow-step-box.failed { background: rgba(192,57,43,.12) !important; }
-body.dark .flow-step-name { color: #FFFFFF !important; }
-body.dark .flow-step-type { color: #8A8678 !important; }
+body.dark .flow-step-name { color: #FFFFFF !important; font-size: .85rem !important; }
+body.dark .flow-step-type { color: #8A8678 !important; font-size: .72rem !important; }
 body.dark .flow-connector-line { background: rgba(228,223,216,.15) !important; }
 body.dark .flow-connector-arrow { border-left-color: rgba(228,223,216,.15) !important; }
 
@@ -1924,11 +2089,13 @@ tbody td {
     <rect x="11" y="11" width="7" height="7" rx="1.5"/>
   </symbol>
   <symbol id="ic-workflow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="4" cy="10" r="2.5"/>
-    <circle cx="16" cy="5" r="2.5"/>
-    <circle cx="16" cy="15" r="2.5"/>
-    <line x1="6.5" y1="9" x2="13.5" y2="6"/>
-    <line x1="6.5" y1="11" x2="13.5" y2="14"/>
+    <rect x="1.5" y="7.5" width="5" height="5" rx="1.2"/>
+    <rect x="7.5" y="7.5" width="5" height="5" rx="1.2"/>
+    <rect x="13.5" y="7.5" width="5" height="5" rx="1.2"/>
+    <line x1="6.5" y1="10" x2="7.5" y2="10"/>
+    <line x1="12.5" y1="10" x2="13.5" y2="10"/>
+    <polyline points="11.5,8.8 12.5,10 11.5,11.2"/>
+    <polyline points="5.5,8.8 6.5,10 5.5,11.2"/>
   </symbol>
   <symbol id="ic-run" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="10" cy="10" r="7.5"/>
@@ -2213,10 +2380,10 @@ function icon(id, size) {
         </div>
       </div>
       <div>
-        <div class="brand">Flow<span style="color:var(--mustard)">Craft</span></div>
+        <div class="brand">Ra<span style="color:var(--mustard)">ze</span></div>
       </div>
     </div>
-    <div class="tagline">workflow engine</div>
+    <div class="tagline">razors through workflows</div>
   </div>
 
   <div class="nav-section">Workspace</div>
@@ -2240,10 +2407,24 @@ function icon(id, size) {
   </div>
 
   <div class="sidebar-footer">
-    <div class="db-indicator">
-      <div class="db-dot"></div>
-      <span class="db-label"><svg width="12" height="12" style="vertical-align:middle;margin-right:4px;opacity:.5"><use href="#ic-db"/></svg>MongoDB</span>
-      <span class="db-version">v1.0</span>
+    <div class="raze-widget">
+      <div class="raze-particles">
+        <div class="raze-p"></div>
+        <div class="raze-p"></div>
+        <div class="raze-p"></div>
+        <div class="raze-p"></div>
+        <div class="raze-p"></div>
+      </div>
+      <div class="raze-bolt-wrap">
+        <div class="raze-bolt-ring"></div>
+        <div class="raze-bolt-core">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <polyline points="8.5,1.5 3.5,8 7,8 5.5,12.5 10.5,6 7,6" stroke="#F2D04E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="#F2D04E" fill-opacity="0.3"/>
+          </svg>
+        </div>
+      </div>
+      <div class="raze-wordmark">Ra<span>ze</span></div>
+      <div class="raze-tagline">razors through workflows</div>
     </div>
   </div>
 </aside>
@@ -2255,7 +2436,7 @@ function icon(id, size) {
       <div class="topbar-icon" id="topbar-page-icon">
         <svg width="14" height="14"><use href="#ic-dashboard"/></svg>
       </div>
-      <div class="topbar-title" id="page-title"><span>~/</span>dashboard</div>
+      <div class="topbar-title" id="page-title">dashboard</div>
     </div>
     <div class="topbar-right">
       <!-- LIVE indicator -->
@@ -2287,10 +2468,10 @@ function icon(id, size) {
           <div style="width:28px;height:28px;background:rgba(242,208,78,.15);border:1px solid rgba(242,208,78,.35);border-radius:7px;display:flex;align-items:center;justify-content:center;">
             <svg width="14" height="14" fill="none" stroke="#F2D04E" stroke-width="1.6"><polyline points="8.5,1.5 3.5,8 7,8 5.5,12.5 10.5,6 7,6" stroke-linecap="round" stroke-linejoin="round" fill="#F2D04E" fill-opacity="0.3"/></svg>
           </div>
-          <span style="font-size:.65rem;font-family:var(--font-mono);color:rgba(242,208,78,.6);letter-spacing:2px;text-transform:uppercase;">Workflow Automation</span>
+          <span style="font-size:.65rem;font-family:var(--font-mono);color:rgba(242,208,78,.6);letter-spacing:2px;text-transform:uppercase;">Lightning Fast Execution</span>
         </div>
-        <h2 style="font-size:1.6rem;font-weight:700;color:#F2D04E;letter-spacing:-0.5px;line-height:1.2;margin-bottom:6px;font-family:'Domine',serif;">Welcome to <em style="font-style:italic;color:#fff;">FlowCraft</em></h2>
-        <p style="font-size:.76rem;color:rgba(228,223,216,.55);font-family:var(--font-mono);line-height:1.6;max-width:340px;">Design, run &amp; monitor multi-step workflows with visual rule routing and real-time execution tracking.</p>
+        <h2 style="font-size:1.6rem;font-weight:700;color:#F2D04E;letter-spacing:-0.5px;line-height:1.2;margin-bottom:6px;font-family:'Domine',serif;">Welcome to <em style="font-style:italic;color:#fff;">Raze</em></h2>
+        <p style="font-size:.76rem;color:rgba(228,223,216,.55);font-family:var(--font-mono);line-height:1.6;max-width:340px;">Raze through multi-step workflows with razor-sharp rule routing, instant approvals &amp; real-time execution tracking.</p>
         <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;gap:5px;background:rgba(242,208,78,.1);border:1px solid rgba(242,208,78,.2);border-radius:5px;padding:4px 10px;">
             <svg width="10" height="10" fill="none" stroke="#F2D04E" stroke-width="2"><polyline points="2,5 4.5,7.5 8,2.5" stroke-linecap="round"/></svg>
@@ -2785,12 +2966,12 @@ function icon(id, size) {
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
             <span class="badge" id="exec-status-badge"></span>
-            <button class="btn btn-ghost btn-sm" id="exec-cancel-btn" onclick="cancelExecution()">
-              <svg width="13" height="13"><use href="#ic-cancel"/></svg>
+            <button class="btn btn-ghost" id="exec-cancel-btn" onclick="cancelExecution()">
+              <svg width="15" height="15"><use href="#ic-cancel"/></svg>
               Cancel
             </button>
-            <button class="btn btn-ghost btn-sm" id="exec-retry-btn" onclick="retryExecution()" style="display:none;">
-              <svg width="13" height="13"><use href="#ic-retry"/></svg>
+            <button class="btn btn-ghost" id="exec-retry-btn" onclick="retryExecution()" style="display:none;">
+              <svg width="15" height="15"><use href="#ic-retry"/></svg>
               Retry
             </button>
           </div>
@@ -3133,7 +3314,7 @@ function navigate(page) {
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const titles = { dashboard:'dashboard', workflows:'workflows', editor:'workflow editor', rules:'rule editor', executions:'run workflow', audit:'audit log' };
-  document.getElementById('page-title').innerHTML = '<span>~/</span>' + (titles[page] || page);
+  document.getElementById('page-title').innerHTML = titles[page] || page;
   const iconEl = document.getElementById('topbar-page-icon');
   const iconId = PAGE_ICONS[page] || 'ic-bolt';
   iconEl.innerHTML = '<svg width="14" height="14"><use href="#' + iconId + '"/></svg>';
@@ -3206,9 +3387,9 @@ async function renderWorkflowList() {
       const tr = document.createElement('tr');
       tr.innerHTML =
         '<td class="uuid-cell" title="' + esc(id) + '">' + eid(id) + '</td>' +
-        '<td><div style="display:flex;align-items:center;gap:8px;"><div class="wf-icon"><svg width="14" height="14"><use href="#ic-workflow"/></svg></div><div><div style="font-weight:700;color:#24221B;">' + esc(wf.name) + '</div>' + (wf.description ? '<div style="font-size:.76rem;color:#7A7568;margin-top:1px;font-family:var(--font-mono);">' + esc(wf.description) + '</div>' : '') + '</div></div></td>' +
-        '<td><div style="display:flex;align-items:center;gap:4px;font-family:var(--font-mono);font-weight:700;color:#3A3428;"><svg width="12" height="12" style="color:#7A7060;"><use href="#ic-task"/></svg>' + (wf.step_count || 0) + '</div></td>' +
-        '<td style="font-family:var(--font-mono);color:#5A5548;font-weight:700;">v' + wf.version + '</td>' +
+        '<td><div style="display:flex;align-items:center;gap:8px;"><div class="wf-icon"><svg width="14" height="14"><use href="#ic-workflow"/></svg></div><div><div class="wf-name-cell" style="font-weight:700;">' + esc(wf.name) + '</div>' + (wf.description ? '<div class="wf-desc-cell" style="font-size:.76rem;margin-top:1px;font-family:var(--font-mono);">' + esc(wf.description) + '</div>' : '') + '</div></div></td>' +
+        '<td><div style="display:flex;align-items:center;gap:4px;font-family:var(--font-mono);font-weight:700;" class="wf-step-cell"><svg width="12" height="12" style="opacity:.6;"><use href="#ic-task"/></svg>' + (wf.step_count || 0) + '</div></td>' +
+        '<td class="wf-version-cell" style="font-family:var(--font-mono);font-weight:700;">v' + wf.version + '</td>' +
         '<td><span class="badge badge-' + (wf.is_active ? 'active' : 'inactive') + '">' + (wf.is_active ? 'active' : 'inactive') + '</span></td>' +
         '<td><div class="actions-cell">' +
           '<button class="btn btn-ghost btn-xs" data-action="load-editor" data-k="' + k1 + '"><svg width="11" height="11" style="vertical-align:middle;"><use href="#ic-edit"/></svg> Edit</button>' +
@@ -3679,21 +3860,21 @@ async function renderExecView(exec, wf) {
 
     const iconColor = state === 'done' ? 'var(--green)' : state === 'current' ? 'var(--blue)' : state === 'failed' ? 'var(--red)' : 'var(--text-2)';
     box.innerHTML =
-      '<div class="flow-step-icon"><svg width="20" height="20" style="color:' + iconColor + '"><use href="#' + iconId + '"/></svg></div>' +
+      '<div class="flow-step-icon"><svg width="28" height="28" style="color:' + iconColor + '"><use href="#' + iconId + '"/></svg></div>' +
       '<div class="flow-step-name" title="' + esc(s.name) + '">' + esc(s.name) + '</div>' +
       '<div class="flow-step-type">' + s.step_type + '</div>' +
       '<div class="flow-step-status">' +
-        (state === 'current' ? '<span class="spinner"></span>' : '<span class="badge badge-' + (log ? log.status : (isCurrent ? 'in_progress' : 'pending')) + '" style="font-size:.62rem;padding:1px 5px;">' + (state === 'done' ? '✓' : state === 'failed' ? '✕' : '…') + '</span>') +
+        (state === 'current' ? '<span class="spinner"></span>' : '<span class="badge badge-' + (log ? log.status : (isCurrent ? 'in_progress' : 'pending')) + '" style="font-size:.68rem;padding:2px 8px;">' + (state === 'done' ? '✓' : state === 'failed' ? '✕' : '…') + '</span>') +
       '</div>';
     node.appendChild(box);
 
     if (isCurrent && exec.status === 'in_progress' && s.step_type === 'approval') {
       const apanel = document.createElement('div');
-      apanel.style.cssText = 'margin-top:8px;width:110px;';
+      apanel.style.cssText = 'margin-top:10px;width:100%;max-width:180px;';
       apanel.innerHTML =
         '<div style="display:flex;flex-direction:column;gap:4px;">' +
-          '<button class="btn btn-primary btn-xs" data-dec="approve" onclick="_doApprove(this.dataset.dec)" style="width:100%;justify-content:center;"><svg width="11" height="11"><use href="#ic-check"/></svg> Approve</button>' +
-          '<button class="btn btn-danger btn-xs" data-dec="reject" onclick="_doApprove(this.dataset.dec)" style="width:100%;justify-content:center;"><svg width="11" height="11"><use href="#ic-close"/></svg> Reject</button>' +
+          '<button class="btn btn-primary btn-sm" data-dec="approve" onclick="_doApprove(this.dataset.dec)" style="width:100%;justify-content:center;"><svg width="13" height="13"><use href="#ic-check"/></svg> Approve</button>' +
+          '<button class="btn btn-danger btn-sm" data-dec="reject" onclick="_doApprove(this.dataset.dec)" style="width:100%;justify-content:center;"><svg width="13" height="13"><use href="#ic-close"/></svg> Reject</button>' +
         '</div>';
       node.appendChild(apanel);
     }
@@ -3723,8 +3904,8 @@ async function renderExecView(exec, wf) {
         (currentStep.metadata?.assignee_email ? '<div class="approval-sub">Assignee: ' + esc(currentStep.metadata.assignee_email) + '</div>' : '') +
         (currentStep.metadata?.instructions ? '<div class="approval-sub" style="margin-top:4px;">' + esc(currentStep.metadata.instructions) + '</div>' : '') +
       '</div>' +
-      '<button class="btn btn-primary btn-sm" data-dec="approve" onclick="_doApprove(this.dataset.dec)"><svg width="13" height="13"><use href="#ic-check"/></svg> Approve</button>' +
-      '<button class="btn btn-danger btn-sm" data-dec="reject" onclick="_doApprove(this.dataset.dec)"><svg width="13" height="13"><use href="#ic-close"/></svg> Reject</button>';
+      '<button class="btn btn-primary" data-dec="approve" onclick="_doApprove(this.dataset.dec)"><svg width="15" height="15"><use href="#ic-check"/></svg> Approve</button>' +
+      '<button class="btn btn-danger" data-dec="reject" onclick="_doApprove(this.dataset.dec)"><svg width="15" height="15"><use href="#ic-close"/></svg> Reject</button>';
     sv.appendChild(panel);
   }
 
@@ -3800,12 +3981,12 @@ async function renderAuditLog() {
       const tr = document.createElement('tr');
       tr.innerHTML =
         '<td class="uuid-cell" title="' + esc(id) + '">' + eid(id) + '</td>' +
-        '<td><div style="display:flex;align-items:center;gap:6px;"><div class="wf-icon" style="width:24px;height:24px;border-radius:5px;"><svg width="12" height="12"><use href="#ic-workflow"/></svg></div><span style="font-weight:700;color:#24221B;">' + esc(wfMap[e.workflow_id] || '-') + '</span></div></td>' +
-        '<td style="font-family:var(--font-mono);color:#5A5548;font-weight:700;">v' + e.workflow_version + '</td>' +
+        '<td><div style="display:flex;align-items:center;gap:6px;"><div class="wf-icon" style="width:24px;height:24px;border-radius:5px;"><svg width="12" height="12"><use href="#ic-workflow"/></svg></div><span class="wf-name-cell" style="font-weight:700;">' + esc(wfMap[e.workflow_id] || '-') + '</span></div></td>' +
+        '<td class="wf-version-cell" style="font-family:var(--font-mono);font-weight:700;">v' + e.workflow_version + '</td>' +
         '<td><span class="badge badge-' + e.status + '">' + e.status.replace('_', ' ').toUpperCase() + '</span></td>' +
-        '<td style="font-family:var(--font-mono);font-size:.76rem;color:#5A5548;font-weight:600;">' + esc(e.triggered_by || '-') + '</td>' +
-        '<td style="font-family:var(--font-mono);font-size:.76rem;color:#3A3830;font-weight:600;">' + fmtShort(e.started_at) + '</td>' +
-        '<td style="font-family:var(--font-mono);font-size:.76rem;color:#3A3830;font-weight:600;">' + fmtShort(e.ended_at) + '</td>' +
+        '<td class="wf-meta-cell" style="font-family:var(--font-mono);font-size:.76rem;font-weight:600;">' + esc(e.triggered_by || '-') + '</td>' +
+        '<td class="wf-meta-cell" style="font-family:var(--font-mono);font-size:.76rem;font-weight:600;">' + fmtShort(e.started_at) + '</td>' +
+        '<td class="wf-meta-cell" style="font-family:var(--font-mono);font-size:.76rem;font-weight:600;">' + fmtShort(e.ended_at) + '</td>' +
         '<td><button class="btn btn-ghost btn-xs" data-action="view-logs" data-k="' + k + '"><svg width="11" height="11" style="vertical-align:middle;"><use href="#ic-log"/></svg> Logs</button></td>';
       tbody.appendChild(tr);
     });
@@ -3894,7 +4075,7 @@ mongoose.connect(MONGO_URI)
     console.log('✅ MongoDB connected:', MONGO_URI);
     await seedSampleData();
     app.listen(PORT, () => {
-      console.log('🚀 FlowCraft running at http://localhost:' + PORT);
+      console.log('🚀 Raze running at http://localhost:' + PORT);
       console.log('   MongoDB URI:', MONGO_URI);
     });
   })
